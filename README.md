@@ -1,4 +1,4 @@
-# libgdtp
+# libgdtp [![Build Status](https://travis-ci.org/andrepuschmann/libgdtp.svg?branch=master)](https://travis-ci.org/andrepuschmann/libgdtp)
 
 libgdtp is a generic data transfer protocol implementation that may be used
 to build packet-based communication systems for various purposes.
