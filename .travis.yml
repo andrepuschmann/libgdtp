@@ -1,7 +1,6 @@
 before_script:
    - sudo apt-get -qq update
-   - sudo apt-get install -qq build-essential libboost-all-dev git cmake libprotobuf-dev protobuf-compiler protobuf-c-compiler openvpn liblog4cxx10-dev
-   - sudo ./scripts/setup_tuntap.sh 10.0.0.1 tun0
+   - sudo apt-get install -qq build-essential libboost-all-dev git cmake libprotobuf-dev protobuf-compiler protobuf-c-compiler liblog4cxx10-dev
 
 language: cpp
 script:
@@ -9,5 +8,5 @@ script:
  - cd build
  - cmake ..
  - make
- - make test
+ - ctest -E tuntap # exclude TUN/TAP test as this is not supported in Travis
  - sudo make install
