@@ -59,7 +59,7 @@ private:
     static std::string get_name(void) { return "GdtpImpl"; }
 
     std::unique_ptr<FlowManager> manager_;
-    EncoderStats stats_ = {};
+    EncoderStats stats_;
 
     DECLARE_LOGPTR(logger_)
 };

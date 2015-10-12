@@ -31,7 +31,8 @@ namespace libgdtp
 {
 
 Gdtp::GdtpImpl::GdtpImpl() :
-    manager_(new FlowManager())
+    manager_(new FlowManager()),
+    stats_()
 {
     LOG_DEBUG("Constructing GdtpImpl ..");
     CONFIG_LOGGER();
