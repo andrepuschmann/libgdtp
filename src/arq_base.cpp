@@ -30,7 +30,8 @@ ArqBase::ArqBase(FlowBase* const flow, const size_t buffer_size) :
     flow_(flow),
     state_(IDLE),
     buffer_(buffer_size),
-    stats_()
+    stats_(),
+    last_stats_()
 {
 }
 
