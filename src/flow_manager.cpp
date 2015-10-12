@@ -176,7 +176,6 @@ int FlowManager::handle_pdu_from_below(const PortId id, Pdu &pdu)
 }
 
 
-#if 1
 int FlowManager::add_frame_for_above(Pdu &pdu, const PortId id)
 {
     try {
@@ -185,7 +184,6 @@ int FlowManager::add_frame_for_above(Pdu &pdu, const PortId id)
         throw GdtpException("Unknown port id " + std::to_string(id) + " specified.");
     }
 }
-#endif
 
 
 void FlowManager::get_pdus_for_below(PduVector &pdus, const PortId id)

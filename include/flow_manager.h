@@ -39,6 +39,7 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/cast.hpp>
 #include <random>
+#include <set>
 #include "logger.h"
 #include "exceptions.h"
 #include "flow_base.h"
