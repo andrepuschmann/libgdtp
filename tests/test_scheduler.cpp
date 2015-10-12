@@ -56,30 +56,30 @@ BOOST_AUTO_TEST_CASE(fifo_scheduler_test)
 
     // create second flow with higher priority
     uint32_t prio = props.get_priority();
-    props.set_priority(prio--); // increase priority
+    prio--; // increase priority
+    props.set_priority(prio);
     FlowId id2 = prot.allocate_flow(2, props);
 
-    // create two SDUs
+    // create short SDU and pass to libgdtp
     std::shared_ptr<Data> short_sdu = make_shared<Data>(PAYLOAD_SIZE_SHORT, 0xff);
-    std::shared_ptr<Data> long_sdu = make_shared<Data>(PAYLOAD_SIZE_LONG, 0xff);
-
-    // hand both SDUs to libgdtp
     prot.handle_data_from_above(short_sdu, id1);
-    prot.handle_data_from_above(long_sdu, id2);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(1));
 
-    // sleep and give libgdtp a chance to queue the frame
+    // create long SDU and pass to libgdtp
+    std::shared_ptr<Data> long_sdu = make_shared<Data>(PAYLOAD_SIZE_LONG, 0xff);
+    prot.handle_data_from_above(long_sdu, id2);
     boost::this_thread::sleep(boost::posix_time::milliseconds(1));
 
     // run transmitter once, this should be the shorter SDU
     Data frame;
     prot.get_data_for_below(DEFAULT_BELOW_PORT_ID, frame);
-    prot.set_data_transmitted(DEFAULT_BELOW_PORT_ID);
     BOOST_CHECK(frame.size() < PAYLOAD_SIZE_LONG);
+    prot.set_data_transmitted(DEFAULT_BELOW_PORT_ID);
 
     // run the second time, this should be the larger SDU
     prot.get_data_for_below(DEFAULT_BELOW_PORT_ID, frame);
-    prot.set_data_transmitted(DEFAULT_BELOW_PORT_ID);
     BOOST_CHECK(frame.size() > PAYLOAD_SIZE_LONG);
+    prot.set_data_transmitted(DEFAULT_BELOW_PORT_ID);
 
     // there shouldn't be any pending frames left
     BOOST_CHECK(prot.has_data_for_below(DEFAULT_BELOW_PORT_ID) == false);
