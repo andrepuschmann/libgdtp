@@ -86,8 +86,8 @@ private:
     ArqState state_;
     Buffer<Pdu> buffer_;
     boost::thread arq_thread_;
-    ArqStats stats_ = {};
-    ArqStats last_stats_ = {};
+    ArqStats stats_;
+    ArqStats last_stats_;
     boost::mutex mutex_;
 
     DECLARE_LOGPTR(logger_)
