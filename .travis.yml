@@ -1,0 +1,12 @@
+before_script:
+   - sudo apt-get -qq update
+   - sudo apt-get install build-essential libboost-all-dev git cmake libprotobuf-dev protobuf-compiler protobuf-c-compiler openvpn liblog4cxx10-dev
+
+language: cpp
+script:
+ - mkdir build
+ - cd build
+ - cmake ..
+ - make
+ - make test
+ - sudo make install
