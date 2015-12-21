@@ -139,4 +139,60 @@ BOOST_AUTO_TEST_CASE(Unreliable_test)
     BOOST_CHECK(rx_prot.has_data_for_below(DEFAULT_BELOW_PORT_ID) == false);
 }
 
+BOOST_AUTO_TEST_CASE(DualUnreliable_test)
+{
+    FlowProperties props;
+    props.set_transfer_mode(UNRELIABLE);
+
+    Gdtp tx_prot;
+    tx_prot.set_default_source_address(1);
+    tx_prot.set_default_destination_address(2);
+    tx_prot.initialize();
+
+    Gdtp rx_prot;
+    rx_prot.set_default_source_address(2);
+    rx_prot.initialize();
+
+    // create unreliable flow on both sides
+    FlowId id = tx_prot.allocate_flow(DEFAULT_ID, props);
+    FlowId id2 = tx_prot.allocate_flow(DEFAULT_ID + 1, props);
+    rx_prot.allocate_flow(DEFAULT_ID, props);
+    rx_prot.allocate_flow(DEFAULT_ID + 1, props);
+
+    // create dummy upper layer SDU and send them on both flows
+    std::shared_ptr<Data> sdu = make_shared<Data>(10, 0xff);
+    tx_prot.handle_data_from_above(sdu, id);
+    tx_prot.handle_data_from_above(sdu, id2);
+
+    boost::this_thread::sleep(boost::posix_time::milliseconds(50));
+
+    // receive protocol instance shouldn't have a waiting conn
+    BOOST_CHECK(rx_prot.has_data_for_below(DEFAULT_BELOW_PORT_ID) == false);
+
+    // run transmitter until all frames are sent
+    size_t counter = 0;
+    while (tx_prot.has_data_for_below(DEFAULT_BELOW_PORT_ID)) {
+        Data data1;
+        tx_prot.get_data_for_below(DEFAULT_BELOW_PORT_ID, data1);
+
+        // feed frame to rx entity
+        rx_prot.handle_data_from_below(DEFAULT_BELOW_PORT_ID, data1);
+
+        // Tell tx that frame has been transmitted
+        tx_prot.set_data_transmitted(DEFAULT_BELOW_PORT_ID);
+
+        // increase tx counter
+        counter++;
+    }
+    BOOST_CHECK(counter == 2);
+
+    // check if data can be passed to upper layer at the receiver
+    BOOST_CHECK(rx_prot.has_data_for_above(DEFAULT_ID) == true);
+    std::shared_ptr<Data> sdu_for_upper_layer = rx_prot.get_data_for_above(DEFAULT_ID);
+
+    // there shouldn't be any other pending frames
+    BOOST_CHECK(tx_prot.has_data_for_below(DEFAULT_BELOW_PORT_ID) == false);
+    BOOST_CHECK(rx_prot.has_data_for_below(DEFAULT_BELOW_PORT_ID) == false);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
