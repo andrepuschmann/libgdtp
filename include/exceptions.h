@@ -60,6 +60,15 @@ public:
     {};
 };
 
+/// Exception thrown when frame couldn't be decoded
+class DecodeException : public GdtpException
+{
+public:
+    DecodeException(const std::string &message) throw()
+        :GdtpException(message)
+    {};
+};
+
 } // libgdtp namespace
 
 #endif /* EXCEPTIONS_H_ */

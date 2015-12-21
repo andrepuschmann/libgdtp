@@ -102,13 +102,17 @@ void Gdtp::GdtpImpl::handle_data_from_below(const PortId id, Data& sdu)
 {
     // decode lower layer SDUs into PDU
     PduVector pdus;
-    ProtobufCodec::decode(sdu, pdus);
-    stats_.bytes_from_below += sdu.size();
-    stats_.frames_from_below++;
+    try {
+		ProtobufCodec::decode(sdu, pdus);
+		stats_.bytes_from_below += sdu.size();
+		stats_.frames_from_below++;
 
-    for (Pdu i : pdus) {
-        LOG_INFO("RX " << i.get_type_as_string() << " " << i.get_seq_no() << " from " << i.get_source_addr());
-        manager_->handle_pdu_from_below(id, i);
+		for (Pdu i : pdus) {
+			LOG_INFO("RX " << i.get_type_as_string() << " " << i.get_seq_no() << " from " << i.get_source_addr());
+			manager_->handle_pdu_from_below(id, i);
+		}
+	} catch(const DecodeException &) {
+		LOG_DEBUG("Couldn't decode incoming date.");
     }
 }
 
