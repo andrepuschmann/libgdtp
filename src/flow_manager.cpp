@@ -251,8 +251,8 @@ FlowBase* FlowManager::find_flow(Pdu &pdu, const PortId belowid)
             // try to derive properties of new flow from existing local flow
             for (auto& f : flows_) {
                if (f.second->get_dest_id() == pdu.get_dest_id()) {
-                   LOG_INFO("Using properties of existing flow.");
                    props = f.second->get_props();
+                   LOG_INFO("  .. using properties of existing flow (" << props.pp_string() << ").");
                }
             }
             flows_[id] = std::shared_ptr<FlowBase>(new InboundFlow(this,
