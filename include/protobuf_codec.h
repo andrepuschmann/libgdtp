@@ -94,7 +94,7 @@ public:
     {
         GdtpFrame frame;
         if (not frame.ParseFromArray((const void*)&lower_layer_sdu.front(), lower_layer_sdu.size())) {
-            throw GdtpException("Decoding frame failed.");
+            throw DecodeException("Decoding frame failed.");
         }
 
         size_t num_pdus = frame.pdu_size();
